@@ -6,34 +6,82 @@
 <title>Khosro Givi | CV</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#07111f;color:#eef5ff;font-family:Arial,sans-serif}
-header{padding:18px 16px;text-align:center;background:#0d1b2a;border-bottom:1px solid #28445e}
-h1{margin:0 0 6px;font-size:22px}
+html,body{height:100%}
+body{margin:0;background:#07111f;color:#eef5ff;font-family:Arial,sans-serif;display:flex;flex-direction:column}
+header{padding:12px 16px;text-align:center;background:#0d1b2a;border-bottom:1px solid #28445e}
+h1{margin:0 0 4px;font-size:20px}
 p{margin:0;color:#9fb0c1;font-size:13px}
-.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:14px}
-a{background:#1769aa;color:#fff;text-decoration:none;padding:11px 16px;border-radius:9px;font-weight:bold;font-size:14px}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:10px}
+a{background:#1769aa;color:#fff;text-decoration:none;padding:10px 16px;border-radius:9px;font-weight:bold;font-size:14px}
 a.secondary{background:#12263b;border:1px solid #294864}
-.viewer{height:calc(100vh - 142px);min-height:650px;padding:0 10px 10px}
-iframe{width:100%;height:100%;border:1px solid #28445e;border-radius:10px;background:#fff}
-.note{text-align:center;padding:8px;color:#718194;font-size:11px}
+.viewer{flex:1;min-height:0;overflow:auto;padding:0 10px 14px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.viewer canvas{background:#fff;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.45);flex:none}
+.loading{color:#9fb0c1;font-size:14px;padding:30px}
+.fallback{width:100%;height:100%;border:1px solid #28445e;border-radius:10px;background:#fff}
 </style>
 </head>
 <body>
 <header>
-<h1>KHOSRO GIVI — CURRICULUM VITAE</h1>
-<p>IT Infrastructure | Network | Systems | IT Support · Muscat, Oman</p>
+  <h1>KHOSRO GIVI — CURRICULUM VITAE</h1>
+  <p>IT Infrastructure | Network | Systems | IT Support · Muscat, Oman</p>
 </header>
 
 <div class="actions">
-<a href="Khosrow_Givi_Resume_Creative_A4.pdf" target="_blank">OPEN CV</a>
-<a class="secondary" href="Khosrow_Givi_Resume_Creative_A4.pdf" download>DOWNLOAD PDF</a>
-<a class="secondary" href="https://khosrogivi.github.io/">BACK TO PROFILE</a>
+  <a href="Khosrow_Givi_Oman_Resume_2026-10.pdf" target="_blank">OPEN CV</a>
+  <a class="secondary" href="Khosrow_Givi_Oman_Resume_2026-10.pdf" download>DOWNLOAD PDF</a>
+  <a class="secondary" href="https://khosrogivi.github.io/">BACK TO PROFILE</a>
 </div>
 
-<div class="viewer">
-<iframe src="Khosrow_Givi_Resume_Creative_A4.pdf" title="Khosro Givi CV"></iframe>
-</div>
+<div class="viewer" id="viewer"><div class="loading">Loading CV…</div></div>
 
-<div class="note">KG / KHOSRO GIVI · Muscat, Oman</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const PDF_URL = 'Khosrow_Givi_Oman_Resume_2026-10.pdf';
+const viewer = document.getElementById('viewer');
+let pdfDoc = null;
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function renderAll() {
+  if (!pdfDoc) return;
+  const dpr = window.devicePixelRatio || 1;
+  const availW = viewer.clientWidth - 20;
+  const availH = viewer.clientHeight - 14;
+  const frag = document.createDocumentFragment();
+  const jobs = [];
+
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    const base = page.getViewport({ scale: 1 });
+    // whole page fits both width and height of the screen
+    const fit = Math.min(availW / base.width, availH / base.height);
+    const vp = page.getViewport({ scale: fit * dpr });
+    const c = document.createElement('canvas');
+    c.width = Math.floor(vp.width);
+    c.height = Math.floor(vp.height);
+    c.style.width = Math.floor(vp.width / dpr) + 'px';
+    c.style.height = Math.floor(vp.height / dpr) + 'px';
+    frag.appendChild(c);
+    jobs.push(() => page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise);
+  }
+  viewer.innerHTML = '';
+  viewer.appendChild(frag);
+  for (const j of jobs) await j();
+}
+
+function showFallback() {
+  viewer.innerHTML = '<iframe class="fallback" src="' + PDF_URL +
+    '#view=Fit&navpanes=0&toolbar=0" title="Khosro Givi CV"></iframe>';
+}
+
+pdfjsLib.getDocument(PDF_URL).promise
+  .then(d => { pdfDoc = d; return renderAll(); })
+  .catch(showFallback);
+
+let t;
+window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(renderAll, 200); });
+window.addEventListener('orientationchange', () => setTimeout(renderAll, 300));
+</script>
 </body>
 </html>
