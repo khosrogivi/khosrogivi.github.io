@@ -4,34 +4,66 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Khosro Givi | CV</title>
+<meta name="description" content="Khosrow Givi — IT Infrastructure & Network Specialist | IT Operations Manager. Muscat, Oman.">
+<meta property="og:title" content="Khosrow Givi — Curriculum Vitae">
+<meta property="og:description" content="IT Infrastructure | Network | Systems | IT Support · Muscat, Oman">
+<meta property="og:image" content="https://khosrogivi.github.io/khosro-photo.jpg">
+<meta name="theme-color" content="#0B1F3A">
 <style>
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:#07111f;color:#eef5ff;font-family:Arial,sans-serif;display:flex;flex-direction:column}
-header{padding:12px 16px;text-align:center;background:#0d1b2a;border-bottom:1px solid #28445e}
-h1{margin:0 0 4px;font-size:20px}
-p{margin:0;color:#9fb0c1;font-size:13px}
-.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:10px}
-a{background:#1769aa;color:#fff;text-decoration:none;padding:10px 16px;border-radius:9px;font-weight:bold;font-size:14px}
-a.secondary{background:#12263b;border:1px solid #294864}
+body{margin:0;background:#07111f;color:#eef5ff;font-family:Arial,Helvetica,sans-serif;display:flex;flex-direction:column}
+
+header{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 16px;
+  background:linear-gradient(180deg,#0d1b2a,#0B1F3A);border-bottom:2px solid #F2B33D}
+.photo{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid #F2B33D;flex:none;background:#e8eef7}
+.title{text-align:left}
+h1{margin:0 0 5px;font-size:20px;letter-spacing:.5px}
+h1 span{color:#F2B33D}
+.title p{margin:0;color:#9fb0c1;font-size:13px;line-height:1.4}
+
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px 10px}
+.actions a{color:#fff;text-decoration:none;padding:10px 16px;border-radius:9px;font-weight:bold;font-size:13.5px;
+  background:#12263b;border:1px solid #294864;transition:transform .15s,filter .15s}
+.actions a:hover{transform:translateY(-1px);filter:brightness(1.15)}
+.actions a.primary{background:#F2B33D;border-color:#F2B33D;color:#0B1F3A}
+.actions a.whatsapp{background:#1fa855;border-color:#178a45}
+
 .viewer{flex:1;min-height:0;overflow:auto;padding:0 10px 14px;display:flex;flex-direction:column;align-items:center;gap:12px}
 .viewer canvas{background:#fff;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.45);flex:none}
 .loading{color:#9fb0c1;font-size:14px;padding:30px}
 .fallback{width:100%;height:100%;border:1px solid #28445e;border-radius:10px;background:#fff}
+
+@media (max-width:560px){
+  header{flex-direction:column;gap:10px;padding:12px}
+  .title{text-align:center}
+  h1{font-size:18px}
+  .actions a{padding:9px 13px;font-size:12.5px}
+}
 </style>
 </head>
-<script data-goatcounter="https://khosrow.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 <body>
+
 <header>
-  <h1>KHOSRO GIVI — CURRICULUM VITAE</h1>
-  <p>IT Infrastructure | Network | Systems | IT Support · Muscat, Oman</p>
+  <img class="photo" src="khosro-photo.jpg" alt="Khosrow Givi">
+  <div class="title">
+    <h1>KHOSRO GIVI <span>—</span> CURRICULUM VITAE</h1>
+    <p>IT Infrastructure | Network | Systems | IT Support · Muscat, Oman</p>
+  </div>
 </header>
 
 <div class="actions">
-  <a href="Khosrow_Givi_Oman_Resume_2026-10.pdf" target="_blank">OPEN CV</a>
-  <a class="secondary" href="Khosrow_Givi_Oman_Resume_2026-10.pdf" download>DOWNLOAD PDF</a>
-  <a class="secondary" href="https://khosrogivi.github.io/">BACK TO PROFILE</a>
+  <a class="primary" href="Khosrow_Givi_Oman_Resume_2026-10.pdf" target="_blank"
+     data-goatcounter-click="cv-open-pdf" data-goatcounter-title="CV: Open PDF">OPEN CV</a>
+
+  <a href="Khosrow_Givi_Oman_Resume_2026-10.pdf" download
+     data-goatcounter-click="cv-download-pdf" data-goatcounter-title="CV: Download PDF">DOWNLOAD PDF</a>
+
+  <a class="whatsapp" href="https://wa.me/96897403036?text=Hello%20Khosrow%2C%20I%20saw%20your%20CV%20and%20would%20like%20to%20get%20in%20touch." target="_blank" rel="noopener"
+     data-goatcounter-click="cv-whatsapp" data-goatcounter-title="CV: WhatsApp">WHATSAPP</a>
+
+  <a href="https://khosrogivi.github.io/"
+     data-goatcounter-click="cv-back-to-profile" data-goatcounter-title="CV: Back to profile">BACK TO PROFILE</a>
 </div>
 
 <div class="viewer" id="viewer"><div class="loading">Loading CV…</div></div>
@@ -56,7 +88,6 @@ async function renderAll() {
   for (let i = 1; i <= pdfDoc.numPages; i++) {
     const page = await pdfDoc.getPage(i);
     const base = page.getViewport({ scale: 1 });
-    // whole page fits both width and height of the screen
     const fit = Math.min(availW / base.width, availH / base.height);
     const vp = page.getViewport({ scale: fit * dpr });
     const c = document.createElement('canvas');
@@ -85,5 +116,8 @@ let t;
 window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(renderAll, 200); });
 window.addEventListener('orientationchange', () => setTimeout(renderAll, 300));
 </script>
+
+<script data-goatcounter="https://khosrow.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
